@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "motion/react";
 
 export function LoadingSkeleton({ label = "Loading" }: { label?: string }) {
   const reduced = useReducedMotion();

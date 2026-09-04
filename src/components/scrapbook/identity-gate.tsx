@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "motion/react";
 import { Icon } from "@/components/ui/icons";
 import { DEMO_PASSCODES, identities } from "@/lib/mock-data";
 import { useApp } from "@/providers/app-provider";

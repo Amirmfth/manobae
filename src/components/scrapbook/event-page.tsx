@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion } from "motion/react";
 import { useMotionLanguage } from "@/components/motion/motion-system";
 import { ContactSheet, HeroPhotograph } from "@/components/scrapbook/photo-compositions";
 import { Icon } from "@/components/ui/icons";
