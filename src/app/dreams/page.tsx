@@ -1,0 +1,4 @@
+import Link from "next/link";
+import { requireUser } from "@/lib/server/session";
+
+export default async function DreamsPage() { await requireUser(); return <div className="page-container dreams-page stack-xl"><header className="page-header"><div className="stack-sm"><p className="eyebrow">چیزهایی برای یک روزِ بعد</p><h1 className="display-type">رویاهای ما</h1><p className="text-muted reading-width">از ساختن پاستا تا یک سفر طولانی؛ هر رویا می‌تواند کم‌کم به برنامه و بعد به خاطره تبدیل شود.</p></div><Link className="button button--primary" href="/dreams/new">یک رویای تازه</Link></header><div className="empty-postcard"><span className="motif motif--postage" aria-hidden="true"/><h2>اولین کارت‌پستال آینده را بنویس</h2><p>چیزی که دوست داری با کیمیا تجربه کنی، هرقدر کوچک یا دور.</p><Link className="button button--secondary" href="/dreams/new">نوشتن رویا</Link></div></div>; }

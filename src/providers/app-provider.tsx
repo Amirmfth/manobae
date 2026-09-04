@@ -16,9 +16,9 @@ type AppContextValue = {
 
 const AppContext = createContext<AppContextValue | null>(null);
 
-export function AppProvider({ children }: { children: React.ReactNode }) {
+export function AppProvider({ children, initialIdentity = null }: { children: React.ReactNode; initialIdentity?: IdentityId | null }) {
   const [locale, setLocale] = useState<Locale>("fa");
-  const [identity, setIdentity] = useState<IdentityId | null>(null);
+  const [identity, setIdentity] = useState<IdentityId | null>(initialIdentity);
   const [toastMessage, setToastMessage] = useState("");
   const theme = themeForIdentity(identity);
 

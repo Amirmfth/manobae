@@ -1,0 +1,2 @@
+import { ComingPage } from "@/components/layout/coming-page"; import { requireUser } from "@/lib/server/session";
+export default async function Page(){await requireUser();return <ComingPage titleFa="یک رویای تازه" titleEn="A new dream" bodyFa="این فرم بعداً رویا را از «یک روز» تا «انجام شد» همراهی می‌کند و در پایان به یک خاطره وصل می‌شود." bodyEn="This form will carry a dream from someday to done, then connect it to a memory." back="/dreams"/>}

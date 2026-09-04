@@ -1,0 +1,2 @@
+import { ComingPage } from "@/components/layout/coming-page"; import { requireUser } from "@/lib/server/session";
+export default async function Page(){await requireUser();return <ComingPage titleFa="چیزهای کوچکی که دیدیم" titleEn="Little things we noticed" bodyFa="یادداشت‌های کوتاهی که توجه‌های روزمره‌مان را نگه می‌دارند." bodyEn="Short notes that preserve the small ways we pay attention." back="/us"/>}

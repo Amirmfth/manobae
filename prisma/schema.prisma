@@ -1,0 +1,276 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum IdentityKey {
+  AMIR
+  KIMIA
+}
+
+enum EventType {
+  MOMENT
+  DATE
+  MILESTONE
+  TRIP
+}
+
+enum Visibility {
+  SHARED
+  PRIVATE
+}
+
+enum DreamStatus {
+  SOMEDAY
+  PLANNING
+  PLANNED
+  DONE
+}
+
+enum PlaceStatus {
+  SAVED
+  PLANNED
+  VISITED
+  FAVORITE
+}
+
+model Couple {
+  id            String         @id @default(cuid())
+  slug          String         @unique
+  title         String
+  togetherSince DateTime?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  users         User[]
+  events        Event[]
+  places        Place[]
+  questions     Question[]
+  appreciations Appreciation[]
+  dreams        Dream[]
+  decisions     Decision[]
+}
+
+model User {
+  id             String             @id @default(cuid())
+  coupleId       String
+  identityKey    IdentityKey        @unique
+  nameFa         String
+  nameEn         String
+  passcodeHash   String
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  couple         Couple             @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+  sessions       Session[]
+  createdEvents  Event[]            @relation("EventCreator")
+  eventMemories  EventMemory[]
+  participations EventParticipant[]
+  uploads        Media[]            @relation("MediaUploader")
+  answers        Answer[]
+  checkIns       DailyCheckIn[]
+  appreciations  Appreciation[]
+  createdDreams  Dream[]            @relation("DreamCreator")
+  createdDecisions Decision[]        @relation("DecisionCreator")
+  votes          Vote[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  tokenHash String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, expiresAt])
+}
+
+model LoginAttempt {
+  id          String   @id @default(cuid())
+  fingerprint String   @unique
+  count       Int      @default(0)
+  windowStart DateTime @default(now())
+  blockedUntil DateTime?
+  updatedAt   DateTime @updatedAt
+}
+
+model Event {
+  id           String             @id @default(cuid())
+  coupleId     String
+  createdById  String
+  placeId      String?
+  title        String
+  happenedAt   DateTime
+  endedAt      DateTime?
+  type         EventType
+  summary      String?
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  couple       Couple             @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+  createdBy    User               @relation("EventCreator", fields: [createdById], references: [id])
+  place        Place?             @relation(fields: [placeId], references: [id], onDelete: SetNull)
+  memories     EventMemory[]
+  participants EventParticipant[]
+  media        Media[]
+  dreams       Dream[]            @relation("DreamCompletionEvent")
+
+  @@index([coupleId, happenedAt])
+}
+
+model EventMemory {
+  id         String     @id @default(cuid())
+  eventId    String
+  authorId   String
+  body       String
+  visibility Visibility @default(SHARED)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  event      Event      @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  author     User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([eventId, authorId])
+}
+
+model EventParticipant {
+  eventId String
+  userId  String
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([eventId, userId])
+}
+
+model Media {
+  id           String   @id @default(cuid())
+  eventId      String
+  uploadedById String
+  storagePath  String   @unique
+  mimeType     String
+  width        Int?
+  height       Int?
+  altFa        String?
+  altEn        String?
+  sortOrder    Int      @default(0)
+  createdAt    DateTime @default(now())
+  event        Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  uploadedBy   User     @relation("MediaUploader", fields: [uploadedById], references: [id])
+}
+
+model Place {
+  id            String      @id @default(cuid())
+  coupleId      String
+  providerId    String?
+  name          String
+  address       String?
+  latitude      Decimal?    @db.Decimal(9, 6)
+  longitude     Decimal?    @db.Decimal(9, 6)
+  status        PlaceStatus @default(SAVED)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  couple        Couple      @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+  events        Event[]
+
+  @@unique([coupleId, providerId])
+}
+
+model Question {
+  id          String   @id @default(cuid())
+  coupleId    String
+  promptFa    String
+  promptEn    String
+  availableOn DateTime
+  createdAt   DateTime @default(now())
+  couple      Couple   @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+  answers     Answer[]
+
+  @@index([coupleId, availableOn])
+}
+
+model Answer {
+  id         String   @id @default(cuid())
+  questionId String
+  authorId   String
+  body       String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  author     User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@unique([questionId, authorId])
+}
+
+model DailyCheckIn {
+  id        String   @id @default(cuid())
+  authorId  String
+  day       DateTime @db.Date
+  mood      String
+  energy    Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@unique([authorId, day])
+}
+
+model Appreciation {
+  id        String     @id @default(cuid())
+  coupleId  String
+  authorId  String
+  body      String
+  visibility Visibility @default(SHARED)
+  createdAt DateTime   @default(now())
+  couple    Couple     @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+  author    User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([coupleId, createdAt])
+}
+
+model Dream {
+  id                String      @id @default(cuid())
+  coupleId          String
+  createdById       String
+  completionEventId String?
+  title             String
+  notes             String?
+  status            DreamStatus @default(SOMEDAY)
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  couple            Couple      @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+  createdBy         User        @relation("DreamCreator", fields: [createdById], references: [id])
+  completionEvent   Event?      @relation("DreamCompletionEvent", fields: [completionEventId], references: [id], onDelete: SetNull)
+}
+
+model Decision {
+  id          String           @id @default(cuid())
+  coupleId    String
+  createdById String
+  title       String
+  revealedAt  DateTime?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  couple      Couple           @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+  createdBy   User             @relation("DecisionCreator", fields: [createdById], references: [id])
+  options     DecisionOption[]
+}
+
+model DecisionOption {
+  id         String   @id @default(cuid())
+  decisionId String
+  label      String
+  sortOrder  Int      @default(0)
+  decision   Decision @relation(fields: [decisionId], references: [id], onDelete: Cascade)
+  votes      Vote[]
+}
+
+model Vote {
+  optionId String
+  voterId  String
+  rank     Int?
+  option   DecisionOption @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  voter    User           @relation(fields: [voterId], references: [id], onDelete: Cascade)
+
+  @@id([optionId, voterId])
+}

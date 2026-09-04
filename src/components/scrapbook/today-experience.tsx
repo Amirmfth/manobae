@@ -7,17 +7,17 @@ import { motion } from "motion/react";
 import { useMotionLanguage } from "@/components/motion/motion-system";
 import { AppreciationSlip } from "@/components/scrapbook/appreciation-slip";
 import { DailyQuestion } from "@/components/scrapbook/daily-question";
-import { EventPreview } from "@/components/scrapbook/event-preview";
 import { MoodSelector } from "@/components/scrapbook/mood-selector";
 import { Icon } from "@/components/ui/icons";
 import { EmptyState, ErrorState, LoadingSkeleton } from "@/components/ui/states";
-import { events, identities, places, recentMemories } from "@/lib/mock-data";
+import { identities, places, recentMemories } from "@/lib/mock-data";
 import { formatNumber } from "@/lib/locale";
+import type { TodayInsight } from "@/lib/server/insights";
 import { useApp } from "@/providers/app-provider";
 
 type ViewState = "ready" | "loading" | "empty" | "error";
 
-export function TodayExperience() {
+export function TodayExperience({ insight }: { insight: TodayInsight | null }) {
   const { locale, identity, theme } = useApp();
   const [view, setView] = useState<ViewState>("ready");
   const isFa = locale === "fa";
@@ -71,7 +71,7 @@ export function TodayExperience() {
           </div>
         </motion.section>
 
-        <EventPreview event={events[0]} locale={locale} />
+        {insight && <motion.aside className="today-insight" {...motionLanguage.reveal()}><span className="motif motif--date-stamp" aria-hidden="true"/><div><p className="eyebrow">{isFa ? "دفتر چیزی یادتان انداخت" : "The scrapbook noticed something"}</p><h2 className="section-title display-type">{isFa ? insight.titleFa : insight.titleEn}</h2><p>{isFa ? insight.bodyFa : insight.bodyEn}</p><Link className="button button--quiet" href={insight.href}>{isFa ? "باز کردن این نخ" : "Follow this thread"}</Link></div></motion.aside>}
 
         <motion.section className="journal-tail" {...motionLanguage.reveal()} aria-label={isFa ? "ادامه‌ی امروز" : "More from today"}>
           <article className="plan-ticket"><span className="motif motif--date-stamp" aria-hidden="true" /><p className="eyebrow">{isFa ? "قرار بعدی · پنجشنبه" : "Next plan · Thursday"}</p><h2 className="section-title display-type">{isFa ? "قدم‌زدن از پارک لاله تا کافه" : "Laleh Park, then coffee"}</h2><p>{isFa ? "ساعت ۶؛ بدون برنامه‌ی دقیق، طبق معمول." : "Six o’clock; no strict plan, as usual."}</p></article>
@@ -79,7 +79,7 @@ export function TodayExperience() {
           <aside className="inside-joke"><span className="motif motif--underline-wave" aria-hidden="true" /><p className="keepsake-type">{isFa ? "قانون شماره‌ی ۱۲: «فقط یه عکس» هرگز فقط یه عکس نیست." : "Rule no. 12: “just one photo” is never just one photo."}</p></aside>
         </motion.section>
 
-        <footer className="today-closing"><span className="motif motif--paired-connector" aria-hidden="true" /><p>{isFa ? "تا امشب، همین چند چیز کوچک کافی‌ست." : "Until tonight, these few little things are enough."}</p><Link href="/days/events/darband-rain" className="button button--quiet">{isFa ? "رفتن به روزهای ما" : "Visit our days"}<Icon name="back" className="icon-forward" /></Link></footer>
+        <footer className="today-closing"><span className="motif motif--paired-connector" aria-hidden="true" /><p>{isFa ? "تا امشب، همین چند چیز کوچک کافی‌ست." : "Until tonight, these few little things are enough."}</p><Link href="/days" className="button button--quiet">{isFa ? "رفتن به روزهای ما" : "Visit our days"}<Icon name="back" className="icon-forward" /></Link></footer>
       </div>}
     </div>
   );
