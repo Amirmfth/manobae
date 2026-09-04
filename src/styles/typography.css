@@ -1,0 +1,21 @@
+:root {
+  --font-ui-en: var(--font-manrope), Inter, system-ui, sans-serif;
+  --font-display-en: var(--font-fraunces), Georgia, serif;
+  --font-ui-fa: var(--font-vazirmatn), Tahoma, Arial, sans-serif;
+  --font-display-fa: var(--font-estedad), var(--font-vazirmatn), Tahoma, sans-serif;
+}
+
+[lang="fa"], [dir="rtl"] { font-family: var(--font-ui-fa); }
+[lang="en"], [dir="ltr"] { font-family: var(--font-ui-en); }
+.display-type { font-family: var(--font-display-en); font-optical-sizing: auto; }
+[dir="rtl"] .display-type, .display-type:lang(fa) { font-family: var(--display-theme-fa, var(--font-display-fa)); letter-spacing: 0; }
+.keepsake-type { font-family: var(--keepsake-theme, var(--font-fraunces)); font-size: 1.35em; font-style: italic; line-height: 1.45; }
+[dir="rtl"] .keepsake-type, .keepsake-type:lang(fa) { font-family: var(--keepsake-theme-fa, var(--font-estedad)); font-style: normal; font-weight: 500; letter-spacing: 0; line-height: 1.9; }
+.eyebrow { color: var(--accent-strong); font-size: 0.8125rem; font-weight: 700; line-height: 1.45; }
+[dir="ltr"] .eyebrow { letter-spacing: 0.04em; text-transform: uppercase; }
+.page-title { font-size: clamp(2rem, 5vw, 3rem); font-weight: 650; line-height: 1.18; }
+.section-title { font-size: clamp(1.45rem, 3vw, 1.75rem); font-weight: 650; line-height: 1.32; }
+.body-large { font-size: clamp(1.0625rem, 2vw, 1.1875rem); line-height: 1.68; }
+[dir="rtl"] .body-large { line-height: 1.75; }
+.text-muted { color: var(--text-secondary); }
+.bidi-isolate { direction: ltr; unicode-bidi: isolate; }

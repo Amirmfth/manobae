@@ -1,0 +1,65 @@
+:root {
+  --paper-0: #fffdf8;
+  --paper-1: #faf6ed;
+  --paper-2: #f1e9dc;
+  --ink-900: #2d2729;
+  --ink-700: #574e52;
+  --ink-500: #7a7074;
+  --line: #d8cec2;
+  --lavender: #9a86b8;
+  --coral: #d77e76;
+  --gold: #c99a4a;
+  --success: #3f7a5a;
+  --danger: #b24f59;
+  --space-0: 0;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  --radius-control: 10px;
+  --radius-surface: 16px;
+  --radius-soft: 22px;
+  --radius-paper: 4px;
+  --radius-ticket: 12px;
+  --radius-pill: 999px;
+  --shadow-lift-1: 0 2px 10px rgb(45 35 37 / 7%);
+  --shadow-lift-2: 0 10px 28px rgb(45 35 37 / 10%);
+  --shadow-photo: 0 8px 24px rgb(35 28 30 / 14%);
+  --duration-instant: 80ms;
+  --duration-micro: 140ms;
+  --duration-quick: 220ms;
+  --duration-normal: 320ms;
+  --duration-identity: 600ms;
+  --duration-keepsake: 800ms;
+  --duration-slow: 520ms;
+  --duration-dramatic: 760ms;
+  --ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --ease-move: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-signature: cubic-bezier(0.22, 1, 0.36, 1);
+  --page-gutter: 1rem;
+  --content-max: 73.75rem;
+  --reading-max: 42.5rem;
+  --nav-height: 4.5rem;
+  --rotate-photo-subtle: -0.8deg;
+  --rotate-photo-opposite: 0.7deg;
+  --rotate-note: 0.45deg;
+  --rotate-stamp: -3deg;
+  --rotate-accent: 0.6deg;
+}
+
+@media (min-width: 48rem) {
+  :root { --page-gutter: 1.5rem; }
+}
+
+@media (min-width: 64rem) {
+  :root { --page-gutter: 2rem; }
+}

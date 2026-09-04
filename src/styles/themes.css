@@ -1,0 +1,107 @@
+.app-root,
+[data-theme="shared"] {
+  --bg: var(--paper-1);
+  --surface: var(--paper-0);
+  --surface-subtle: var(--paper-2);
+  --text: var(--ink-900);
+  --text-secondary: var(--ink-700);
+  --muted: var(--ink-500);
+  --border: var(--line);
+  --focus: #5e4776;
+  --accent: #8b72a6;
+  --accent-strong: #5e4776;
+  --accent-soft: #e9e0f0;
+  --motif: #cc7c73;
+  --deep: #3e3345;
+  --secondary: #c59a55;
+  --theme-radius-offset: 0px;
+  --surface-shape: 16px 6px 18px 8px;
+  --paper-shape: polygon(0 1%, 98% 0, 100% 96%, 2% 100%);
+  --display-theme: var(--font-display-en);
+  --display-theme-fa: var(--font-estedad);
+  --keepsake-theme: var(--font-fraunces);
+  --keepsake-theme-fa: var(--font-estedad);
+  --decor-density: 0.78;
+  --photo-mat: var(--paper-0);
+  --photo-mat-inset: #eee7dd;
+  --paper-border-style: solid;
+  --object-rotation: 0.45deg;
+  --rotate-photo-subtle: -1deg;
+  --rotate-photo-opposite: 1deg;
+  --rotate-note: 0.45deg;
+  --rotate-stamp: -3deg;
+  --rotate-accent: 0.6deg;
+  --identity-enter-x: 12px;
+  --identity-enter-y: 12px;
+  --identity-stagger: 55ms;
+  --motion-shift: 12px;
+  --background-composition: none;
+  --background-motif: url("/motifs/paired-connector.svg");
+}
+
+[data-theme="night"] {
+  --focus: #31466f;
+  --accent: #536b9b;
+  --accent-strong: #31466f;
+  --accent-soft: #dce5f4;
+  --motif: #7886b7;
+  --deep: #242c42;
+  --secondary: #8e779d;
+  --theme-radius-offset: -1px;
+  --surface-shape: 3px 12px 4px 2px;
+  --paper-shape: polygon(0 0, 97% 0, 100% 8%, 100% 100%, 2% 98%);
+  --display-theme-fa: var(--font-estedad);
+  --keepsake-theme-fa: var(--font-estedad);
+  --decor-density: 0.58;
+  --photo-mat: #f2f2ee;
+  --photo-mat-inset: #d9e0e9;
+  --paper-border-style: solid;
+  --object-rotation: -0.32deg;
+  --rotate-photo-subtle: -0.8deg;
+  --rotate-photo-opposite: 0.8deg;
+  --rotate-note: -0.35deg;
+  --rotate-stamp: -4deg;
+  --rotate-accent: -0.55deg;
+  --identity-enter-x: 22px;
+  --identity-enter-y: 4px;
+  --identity-stagger: 48ms;
+  --motion-shift: 18px;
+  --background-composition: none;
+  --background-motif: url("/motifs/ink-star-chart.svg");
+}
+
+[data-theme="rose"] {
+  --focus: #8f3f58;
+  --accent: #c2667a;
+  --accent-strong: #8f3f58;
+  --accent-soft: #f5dde3;
+  --motif: #d58a9b;
+  --deep: #512f3b;
+  --secondary: #d49a79;
+  --theme-radius-offset: 2px;
+  --surface-shape: 28px 8px 30px 12px;
+  --paper-shape: polygon(2% 0, 97% 1%, 100% 8%, 98% 96%, 92% 100%, 6% 98%, 0 91%, 1% 7%);
+  --display-theme-fa: var(--font-estedad);
+  --keepsake-theme-fa: var(--font-estedad);
+  --decor-density: 1;
+  --photo-mat: #fff8f2;
+  --photo-mat-inset: #f4dfd6;
+  --paper-border-style: dashed;
+  --object-rotation: 0.62deg;
+  --rotate-photo-subtle: -1.8deg;
+  --rotate-photo-opposite: 1.8deg;
+  --rotate-note: 0.85deg;
+  --rotate-stamp: 3deg;
+  --rotate-accent: 1deg;
+  --identity-enter-x: 5px;
+  --identity-enter-y: 18px;
+  --identity-stagger: 70ms;
+  --motion-shift: 10px;
+  --background-composition: none;
+  --background-motif: url("/motifs/flower-cluster.svg");
+}
+
+::selection {
+  background: var(--accent-soft);
+  color: var(--text);
+}
