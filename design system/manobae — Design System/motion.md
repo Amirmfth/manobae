@@ -2,6 +2,11 @@
 
 Motion communicates identity, reveal, continuity, and cause. It is not constant decoration.
 
+\#\# Runtime
+\- Use `framer-motion` as the single React animation runtime. Do not mix it with the standalone `motion` package.
+\- Page, reveal, gesture, layout, SVG drawing, and identity-transition motion all go through the shared motion system.
+\- CSS transitions remain appropriate for simple color, border, focus, and pressed-state feedback.
+
 \#\# Durations  
 | Token | Duration | Use |  
 |---|---:|---|  
@@ -47,6 +52,7 @@ Animate transform and opacity. Avoid large blurred layers and infinite particles
 \- Photo settle: translate 22px, scale .97 to 1, and resolve to the theme rotation. The mat shadow responds after the photograph lands.  
 \- Folded note: the note moves toward the reader and the two answers separate into readable sheets. On mobile the reveal may occupy most of the viewport.  
 \- Theme transition: palette changes over 600ms without changing geometry; identity motifs switch once the surface color is stable.  
+\- Identity background: each theme owns one recognizable static pattern field plus a one-time entrance. Night Letter uses stationery grids, constellation routes, and postage; Rose Garden uses botanical repeats, paper dots, ribbons, and scalloped labels; Between Us uses paired notes, linked dots, and threads. Background fields never loop continuously.
 \- Night Letter: controlled horizontal or downward travel, clipped reveals, and ink-line drawing. No bounce.  
 \- Rose Garden: small upward float, soft unfolding, and one secondary flower/ribbon response. Overshoot remains subtle.  
 \- Between Us: two objects enter from opposing inline directions and meet at a connector, then settle together.  

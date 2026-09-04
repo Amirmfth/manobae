@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion } from "framer-motion";
 import { useMotionLanguage } from "@/components/motion/motion-system";
 import { FoldedNote } from "@/components/scrapbook/folded-note";
 import { Icon } from "@/components/ui/icons";

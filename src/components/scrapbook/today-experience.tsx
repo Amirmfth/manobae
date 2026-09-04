@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { useMotionLanguage } from "@/components/motion/motion-system";
 import { AppreciationSlip } from "@/components/scrapbook/appreciation-slip";
 import { DailyQuestion } from "@/components/scrapbook/daily-question";
