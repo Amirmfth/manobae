@@ -3,7 +3,7 @@
 Motion communicates identity, reveal, continuity, and cause. It is not constant decoration.
 
 \#\# Runtime
-\- Use `framer-motion` as the single React animation runtime. Do not mix it with the standalone `motion` package.
+\- Use `motion`, imported from `motion/react`, as the single React animation runtime.
 \- Page, reveal, gesture, layout, SVG drawing, and identity-transition motion all go through the shared motion system.
 \- CSS transitions remain appropriate for simple color, border, focus, and pressed-state feedback.
 

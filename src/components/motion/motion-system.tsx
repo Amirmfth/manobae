@@ -1,6 +1,6 @@
 "use client";
 
-import { MotionConfig, useReducedMotion, type Transition } from "framer-motion";
+import { MotionConfig, useReducedMotion, type Transition } from "motion/react";
 import type { ThemeName } from "@/lib/theme";
 
 const enterEase = [0.16, 1, 0.3, 1] as const;
