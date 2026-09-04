@@ -338,10 +338,6 @@
   .appreciation-slip { padding-block-end: calc(var(--space-8) + env(safe-area-inset-bottom)); }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .app-root::before { display: none; }
-}
-
 /* Final cascade corrections for the reordered Today note. */
 .today-journal > .partner-letter { width: min(92%, 34rem); margin-inline: auto; }
 .today-journal, .today-journal > *, .question-section, .filmstrip-section, .event-preview, .daily-rituals, .journal-tail { min-width: 0; max-width: 100%; }

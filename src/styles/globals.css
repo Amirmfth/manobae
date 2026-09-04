@@ -102,21 +102,58 @@ img, svg { display: block; max-width: 100%; }
 .theme-motif { opacity: var(--decor-density); }
 [data-theme="night"] .theme-motif--rose, [data-theme="rose"] .theme-motif--night { display: none; }
 
-.app-root::before { position: fixed; z-index: 100; inset: 0; pointer-events: none; content: ""; opacity: 0.035; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44'%3E%3Cg fill='%232d2729' opacity='.32'%3E%3Ccircle cx='3' cy='7' r='.45'/%3E%3Ccircle cx='25' cy='13' r='.35'/%3E%3Ccircle cx='39' cy='35' r='.4'/%3E%3Ccircle cx='15' cy='31' r='.3'/%3E%3C/g%3E%3C/svg%3E"); mix-blend-mode: multiply; }
+.app-root::before {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  opacity: 0.12;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg fill='none' stroke='%23574e52' stroke-opacity='.18' stroke-linecap='round'%3E%3Cpath d='M8 18c16-3 28 2 44-1M91 13c18 2 35-2 57 1M22 62c22 4 37-2 55 1M101 57c15-2 29 3 48 0M4 112c26-2 38 4 62 0M86 121c18 3 37-3 68 1M31 148c17-3 29 1 42 0' stroke-width='.55'/%3E%3Cpath d='M18 7c-2 19 2 31 0 46M71 28c3 17-2 30 0 51M132 6c-2 24 2 42 0 64M45 92c-2 18 2 37 0 62M112 88c3 19-2 42 0 67' stroke-width='.4'/%3E%3C/g%3E%3Cg fill='%23574e52' fill-opacity='.13'%3E%3Ccircle cx='12' cy='88' r='.7'/%3E%3Ccircle cx='82' cy='94' r='.55'/%3E%3Ccircle cx='148' cy='83' r='.65'/%3E%3Ccircle cx='62' cy='139' r='.5'/%3E%3C/g%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+}
 .identity-backdrop { position: fixed; z-index: 0; inset: 0; overflow: hidden; pointer-events: none; color: var(--motif); }
-.identity-pattern { width: 100%; min-width: 56rem; height: 100%; min-height: 46rem; color: inherit; }
-.pattern-ink { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
-.identity-pattern--night { opacity: .11; }
-.identity-pattern--night .pattern-geometry { stroke-width: 1; stroke-dasharray: 2 8; }
-.identity-pattern--night .pattern-stars { stroke-width: 1.4; }
-.identity-pattern--night .pattern-stars circle { fill: currentColor; stroke: none; }
-.identity-pattern--night .pattern-postage { stroke-width: 1.2; transform: rotate(-2deg); transform-origin: center; }
-.identity-pattern--rose { opacity: .105; }
-.identity-pattern--rose .pattern-flowers { stroke-width: 1.55; }
-.identity-pattern--rose .pattern-scallop { stroke-width: 1.3; stroke-dasharray: 3 5; }
-.identity-pattern--shared { opacity: .09; }
-.identity-pattern--shared .pattern-paper { fill: color-mix(in srgb, currentColor 7%, transparent); stroke-width: 1; }
-.identity-pattern--shared .pattern-pairs circle { fill: var(--surface); stroke-width: 1.5; }
+.identity-pattern { width: 100%; min-width: 56rem; height: 100%; min-height: 46rem; overflow: visible; color: inherit; transform-origin: center; }
+.pattern-wash { fill: var(--bg); }
+.pattern-field, .pattern-foreground { pointer-events: none; }
+
+.pattern-field--night-grid { opacity: .1; }
+.identity-pattern--night .pattern-rule { fill: none; stroke: var(--accent); stroke-width: .75; }
+.identity-pattern--night .pattern-dot { fill: var(--accent); stroke: none; }
+.identity-pattern--night .pattern-cross { fill: none; stroke: var(--accent); stroke-width: 1; }
+.pattern-field--night-stars { opacity: .12; }
+.identity-pattern--night #night-stars { fill: none; stroke: var(--deep); stroke-width: 1; }
+.identity-pattern--night #night-stars circle { fill: var(--deep); stroke: none; }
+.pattern-foreground--night { fill: none; stroke: var(--accent-strong); stroke-linecap: round; stroke-linejoin: round; }
+.night-postage { opacity: .18; stroke-width: 1.4; transform-origin: 964px 171px; }
+.night-postage circle { stroke-dasharray: 3 4; }
+.night-route { opacity: .19; stroke-width: 1.35; stroke-dasharray: 4 7; }
+.night-corner { opacity: .12; fill: var(--accent); stroke: none; }
+
+.pattern-field--rose-dots { opacity: .11; }
+.identity-pattern--rose #rose-dots circle { fill: var(--secondary); }
+.pattern-field--rose-garden { opacity: .16; }
+.identity-pattern--rose #rose-garden { fill: none; stroke: var(--accent); stroke-linecap: round; stroke-linejoin: round; }
+.identity-pattern--rose .rose-stem { stroke-width: 1.35; }
+.identity-pattern--rose .rose-center { fill: color-mix(in srgb, var(--secondary) 48%, transparent); stroke-width: 1; }
+.identity-pattern--rose .rose-leaf { fill: color-mix(in srgb, var(--accent) 12%, transparent); stroke-width: 1; }
+.identity-pattern--rose .rose-spark { stroke-width: 1; }
+.pattern-foreground--rose { fill: none; stroke: var(--accent-strong); stroke-linecap: round; stroke-linejoin: round; }
+.rose-ribbon { opacity: .16; stroke-width: 1.6; }
+.rose-label { opacity: .2; stroke-width: 1.35; transform-origin: 952px 672px; }
+.rose-label > :first-child { fill: color-mix(in srgb, var(--accent-soft) 64%, transparent); }
+.rose-label circle { fill: color-mix(in srgb, var(--secondary) 24%, transparent); stroke-dasharray: 3 3; }
+.rose-underline { opacity: .2; stroke-width: 2; }
+
+.pattern-field--shared { opacity: .11; }
+.identity-pattern--shared #shared-keepsakes { fill: none; stroke: var(--accent); stroke-linecap: round; stroke-linejoin: round; stroke-width: 1; }
+.identity-pattern--shared #shared-keepsakes rect { fill: color-mix(in srgb, var(--surface) 36%, transparent); }
+.identity-pattern--shared #shared-keepsakes circle { fill: var(--accent); stroke: none; }
+.pattern-foreground--shared { fill: none; stroke: var(--accent-strong); stroke-linecap: round; stroke-linejoin: round; }
+.shared-pair { opacity: .13; stroke-width: 1.2; transform-origin: 333px 237px; }
+.shared-pair rect { fill: color-mix(in srgb, var(--surface) 44%, transparent); }
+.shared-thread { opacity: .2; stroke-width: 1.5; }
+.shared-knots { fill: var(--secondary); stroke: var(--bg); stroke-width: 2; transform-origin: 758px 552px; }
 .shell-main, .desktop-nav, .mobile-nav, .mobile-preferences { position: relative; z-index: 1; }
 
 .skeleton { overflow: hidden; position: relative; border-radius: var(--radius-control); background: var(--surface-subtle); }
@@ -133,6 +170,4 @@ img, svg { display: block; max-width: 100%; }
   .button:hover:not(:disabled) { transform: none; }
 }
 
-/* Identity backdrops are composed in a few anchored regions, never tiled wallpaper. */
-
-.app-root::before { opacity: .075; }
+/* The paper fibre sits above content while the identity pattern moves slowly below it. */

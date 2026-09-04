@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { moods } from "@/lib/mock-data";
 import { useApp } from "@/providers/app-provider";
 
