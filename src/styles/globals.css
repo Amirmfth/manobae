@@ -75,6 +75,7 @@ img, svg { display: block; max-width: 100%; }
 .button--quiet { color: var(--accent-strong); }
 .button--quiet:hover:not(:disabled) { background: var(--accent-soft); }
 .button--icon { min-width: 2.75rem; padding-inline: var(--space-3); }
+.button--danger { border-color: color-mix(in srgb, var(--danger) 45%, transparent); color: var(--danger); }
 
 .field-label { display: block; margin-block-end: var(--space-2); color: var(--text-secondary); font-size: 0.875rem; font-weight: 700; }
 .text-field, .text-area { width: 100%; border: 1px solid color-mix(in srgb, var(--text) 18%, transparent); border-radius: var(--radius-control); background: var(--surface); padding-block: var(--space-3); padding-inline: var(--space-4); transition: border-color var(--duration-quick) var(--ease-enter), box-shadow var(--duration-quick) var(--ease-enter); }
@@ -99,6 +100,7 @@ img, svg { display: block; max-width: 100%; }
 .motif--underline-wave { mask-image: url("/motifs/underline-wave.svg"); }
 .motif--paired-connector { mask-image: url("/motifs/paired-connector.svg"); }
 .motif--constellation { mask-image: url("/motifs/constellation.svg"); }
+.motif--photo-corner { mask-image: url("/motifs/photo-corner.svg"); }
 .theme-motif { opacity: var(--decor-density); }
 [data-theme="night"] .theme-motif--rose, [data-theme="rose"] .theme-motif--night { display: none; }
 

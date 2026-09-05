@@ -1,0 +1,2 @@
+import { ComingPage } from "@/components/layout/coming-page"; import { requireUser } from "@/lib/server/session";
+export default async function Page(){await requireUser();return <ComingPage titleFa="تهرانِ ما" titleEn="Our Tehran" bodyFa="یک نقشه‌ی نزدیک برای کافه‌ها، خیابان‌ها و جاهایی که بخشی از قصه‌مان شده‌اند." bodyEn="A close-up map of cafés, streets, and places that became part of our story." back="/explore"/>}

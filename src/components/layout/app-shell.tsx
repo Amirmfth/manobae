@@ -10,18 +10,20 @@ import { identities } from "@/lib/mock-data";
 import { useApp } from "@/providers/app-provider";
 import { IdentityBackdrop } from "@/components/motion/identity-backdrop";
 import { ManobaeMotion } from "@/components/motion/motion-system";
+import { logout } from "@/app/actions/auth";
 
 const navItems = [
   { key: "today", href: "/today", icon: "today" },
-  { key: "us", href: "/today#question", icon: "us" },
-  { key: "explore", href: "/today#mood", icon: "explore" },
-  { key: "days", href: "/days/events/darband-rain", icon: "days" },
-  { key: "dreams", href: "/days/events/darband-rain#related", icon: "dreams" },
+  { key: "us", href: "/us", icon: "us" },
+  { key: "explore", href: "/explore", icon: "explore" },
+  { key: "days", href: "/days", icon: "days" },
+  { key: "dreams", href: "/dreams", icon: "dreams" },
+  { key: "watch", href: "/watch", icon: "watch" },
 ] as const;
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const { identity, locale, setLocale, theme, selectIdentity } = useApp();
+  const { identity, locale, setLocale, theme } = useApp();
   const [preferencesOpen, setPreferencesOpen] = useState(false);
   const isBare = pathname === "/enter" || pathname === "/";
   const effectiveTheme = pathname.startsWith("/days/events/") ? "shared" : theme;
@@ -45,15 +47,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <button type="button" aria-pressed={locale === "en"} onClick={() => setLocale("en")}>English</button>
             </div>
           </fieldset>
-          <fieldset className="stack-sm">
-            <legend className="field-label">{locale === "fa" ? "هویت آزمایشی" : "Demo identity"}</legend>
-            <div className="segmented segmented--three">
-              <button type="button" aria-pressed={identity === "amir"} onClick={() => selectIdentity("amir")}>Amir</button>
-              <button type="button" aria-pressed={identity === "partner"} onClick={() => selectIdentity("partner")}>{locale === "fa" ? "کیمیا" : "Kimia"}</button>
-              <button type="button" aria-pressed={!identity} onClick={() => selectIdentity(null)}>Shared</button>
-            </div>
-          </fieldset>
-          <p className="status-line"><span className="status-dot" />{locale === "fa" ? "این تنظیمات موقت‌اند و با تازه‌سازی صفحه پاک می‌شوند." : "These settings are temporary and reset on refresh."}</p>
+          <p className="status-line"><span className="status-dot" />{locale === "fa" ? "هویت از کد ورود امن تو می‌آید؛ زبان فقط روی همین دستگاه تغییر می‌کند." : "Your identity comes from your secure entry code; language changes only on this device."}</p>
+          <form action={logout}><button className="button button--secondary" type="submit">{locale === "fa" ? "بستن دفتر" : "Close the scrapbook"}</button></form>
           </div>
         </BottomSheet>
       </div>
@@ -80,5 +75,9 @@ function MobileNav({ pathname, labels }: { pathname: string; labels: Record<stri
 function isActive(pathname: string, key: string) {
   if (key === "today") return pathname === "/today";
   if (key === "days") return pathname.startsWith("/days");
+  if (key === "us") return pathname.startsWith("/us");
+  if (key === "explore") return pathname.startsWith("/explore");
+  if (key === "dreams") return pathname.startsWith("/dreams");
+  if (key === "watch") return pathname.startsWith("/watch");
   return false;
 }

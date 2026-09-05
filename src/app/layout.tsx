@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { AppShell } from "@/components/layout/app-shell";
 import { AppProvider } from "@/providers/app-provider";
+import { getSessionUser } from "@/lib/server/session";
+import "@vidstack/react/player/styles/base.css";
+import "@vidstack/react/player/styles/default/theme.css";
+import "@vidstack/react/player/styles/default/layouts/video.css";
 import "./globals.css";
 
 const manrope = localFont({
@@ -45,7 +49,9 @@ export const metadata: Metadata = {
   description: "A private, bilingual scrapbook for two people and the life they are making together.",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const user = await getSessionUser();
+  const initialIdentity = user?.identityKey === "AMIR" ? "amir" : user?.identityKey === "KIMIA" ? "partner" : null;
   return (
     <html
       lang="fa"
@@ -54,7 +60,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       suppressHydrationWarning
     >
       <body>
-        <AppProvider>
+        <AppProvider initialIdentity={initialIdentity}>
           <AppShell>{children}</AppShell>
         </AppProvider>
       </body>

@@ -1,0 +1,2 @@
+import { ComingPage } from "@/components/layout/coming-page"; import { requireUser } from "@/lib/server/session";
+export default async function Page(){await requireUser();return <ComingPage titleFa="قرار شانسی" titleEn="Date roulette" bodyFa="پیشنهادها از حال‌و‌هوا، بودجه، زمان و جاهای ذخیره‌شده‌ی خودمان می‌آیند." bodyEn="Ideas come from our mood, budget, time, and saved places." back="/explore"/>}

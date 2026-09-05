@@ -1,6 +1,6 @@
 import type { SVGProps } from "react";
 
-type IconName = "today" | "us" | "explore" | "days" | "dreams" | "globe" | "user" | "back" | "edit" | "close" | "place" | "lock" | "check";
+type IconName = "today" | "us" | "explore" | "days" | "dreams" | "watch" | "send" | "globe" | "user" | "back" | "edit" | "close" | "place" | "lock" | "check" | "chat" | "sound" | "muted" | "subtitles";
 
 export function Icon({ name, ...props }: { name: IconName } & SVGProps<SVGSVGElement>) {
   const paths: Record<IconName, React.ReactNode> = {
@@ -9,6 +9,8 @@ export function Icon({ name, ...props }: { name: IconName } & SVGProps<SVGSVGEle
     explore: <><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2.2 4.8-4.8 2.2 2.2-4.8 4.8-2.2Z"/></>,
     days: <><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18M7 14h.01M12 14h.01M17 14h.01M7 18h.01M12 18h.01"/></>,
     dreams: <><path d="M20.5 14.5A8.5 8.5 0 1 1 9.5 3.6 7 7 0 0 0 20.5 14.5Z"/><path d="m16 5 .4 1.3L18 7l-1.6.7L16 9l-.4-1.3L14 7l1.6-.7L16 5Z"/></>,
+    watch: <><rect x="3" y="6" width="18" height="13" rx="2"/><path d="m10 10 5 2.5-5 2.5v-5ZM8 3h8"/></>,
+    send: <><path d="m3 11 18-8-7 18-3-7-8-3Z"/><path d="m11 14 4-4"/></>,
     globe: <><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9S14.5 18.3 12 21c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3Z"/></>,
     user: <><circle cx="12" cy="8" r="4"/><path d="M4 21c.7-5 3.4-8 8-8s7.3 3 8 8"/></>,
     back: <path d="m15 18-6-6 6-6"/>,
@@ -17,6 +19,10 @@ export function Icon({ name, ...props }: { name: IconName } & SVGProps<SVGSVGEle
     place: <><path d="M20 10c0 5.5-8 11-8 11S4 15.5 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></>,
     lock: <><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></>,
     check: <path d="m5 12 4 4L19 6"/>,
+    chat: <><path d="M4 5h16v11H9l-5 4V5Z"/><path d="M8 9h8M8 12h5"/></>,
+    sound: <><path d="M5 10v4h3l4 3V7L8 10H5Z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></>,
+    muted: <><path d="M5 10v4h3l4 3V7L8 10H5Z"/><path d="m16 10 4 4M20 10l-4 4"/></>,
+    subtitles: <><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 11h4M7 15h6M15 11h2M15 15h2"/></>,
   };
 
   return <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>{paths[name]}</svg>;
