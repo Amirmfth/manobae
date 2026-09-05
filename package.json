@@ -8,8 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "db:generate": "prisma generate",
-    "db:migrate:dev": "prisma migrate dev",
-    "db:migrate": "prisma migrate deploy",
+    "db:migration:new": "supabase migration new",
+    "db:migrate": "supabase db push",
     "db:seed": "node prisma/seed.mjs"
   },
   "dependencies": {
@@ -29,6 +29,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.3.4",
+    "supabase": "2.116.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

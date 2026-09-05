@@ -75,6 +75,8 @@ model User {
   createdDreams  Dream[]            @relation("DreamCreator")
   createdDecisions Decision[]        @relation("DecisionCreator")
   votes          Vote[]
+
+  @@index([coupleId])
 }
 
 model Session {
@@ -118,6 +120,8 @@ model Event {
   dreams       Dream[]            @relation("DreamCompletionEvent")
 
   @@index([coupleId, happenedAt])
+  @@index([createdById])
+  @@index([placeId])
 }
 
 model EventMemory {
@@ -132,6 +136,7 @@ model EventMemory {
   author     User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   @@index([eventId, authorId])
+  @@index([authorId])
 }
 
 model EventParticipant {
