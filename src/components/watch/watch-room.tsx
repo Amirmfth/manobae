@@ -499,21 +499,27 @@ export function WatchRoom({
                 <DefaultVideoLayout
                   icons={defaultLayoutIcons}
                   slots={{
-                    beforeFullscreenButton: (
+                    smallLayout: { beforeFullscreenButton: fullscreen ? (
                       <button className="vds-button watch-control-button" type="button" onClick={toggleFullscreenChat} aria-label={isFa ? "باز کردن گفت‌وگو" : "Open chat"} aria-pressed={fullscreenChatOpen}>
                         <Icon name="chat" />
                         {unreadCount > 0 && <span className="watch-control-badge">{Math.min(unreadCount, 9)}</span>}
                       </button>
-                    ),
+                    ) : null },
+                    largeLayout: { beforeFullscreenButton: fullscreen ? (
+                      <button className="vds-button watch-control-button" type="button" onClick={toggleFullscreenChat} aria-label={isFa ? "باز کردن گفت‌وگو" : "Open chat"} aria-pressed={fullscreenChatOpen}>
+                        <Icon name="chat" />
+                        {unreadCount > 0 && <span className="watch-control-badge">{Math.min(unreadCount, 9)}</span>}
+                      </button>
+                    ) : null },
                   }}
                 />
                 <AnimatePresence>
                   {fullscreen && (
-                    <motion.div className="fullscreen-reactions" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+                    <div className="fullscreen-reactions">
                       {(Object.keys(reactionGlyph) as WatchReaction[]).map((reaction) => (
                         <button key={reaction} type="button" onClick={() => sendReaction(reaction)} title={reactionLabels[reaction][isFa ? "fa" : "en"]} aria-label={reactionLabels[reaction][isFa ? "fa" : "en"]}>{reactionGlyph[reaction]}</button>
                       ))}
-                    </motion.div>
+                    </div>
                   )}
                   {fullscreen && fullscreenChatOpen && (
                     <motion.div className="fullscreen-chat-shell" initial={{ opacity: 0, x: isFa ? -24 : 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: isFa ? -24 : 24 }} transition={{ duration: reduced ? 0.05 : 0.24 }}>

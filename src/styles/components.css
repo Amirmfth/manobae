@@ -168,11 +168,11 @@
 .reaction-tray button { width: 2.75rem; height: 2.75rem; display: grid; place-items: center; border: 1px solid rgb(255 255 255 / 18%); border-radius: 50%; background: rgb(255 255 255 / 7%); color: var(--paper-0); cursor: pointer; font-size: 1.1rem; transition: transform var(--duration-quick) var(--ease-enter), background var(--duration-quick) var(--ease-enter); }
 .reaction-tray button:hover { background: rgb(255 255 255 / 14%); transform: translateY(-2px); }
 .reaction-tray button:active { transform: scale(.96); }
-.watch-control-button { position: relative; display: none !important; }
-media-player[data-fullscreen] .watch-control-button { display: inline-flex !important; }
+.watch-control-button { position: relative; display: inline-flex !important; flex: 0 0 auto; }
 .watch-control-button svg { width: 1.25rem; height: 1.25rem; }
 .watch-control-badge { position: absolute; inset-block-start: .1rem; inset-inline-end: .05rem; min-width: 1rem; height: 1rem; display: grid; place-items: center; padding-inline: .2rem; border-radius: 999px; background: #e65b70; color: white; font: 700 .62rem/1 system-ui; box-shadow: 0 2px 8px rgb(0 0 0 / 35%); }
-.fullscreen-reactions { position: absolute; z-index: 31; inset-inline-start: 50%; inset-block-end: 4.7rem; display: flex; gap: .3rem; padding: .4rem; border: 1px solid rgb(255 255 255 / 14%); border-radius: 999px; background: rgb(8 8 12 / 48%); box-shadow: 0 10px 36px rgb(0 0 0 / 28%); backdrop-filter: blur(10px); transform: translateX(-50%); pointer-events: auto; }
+.fullscreen-reactions { position: absolute; z-index: 31; inset-inline-start: 50%; inset-block-end: 4.7rem; display: flex; gap: .3rem; padding: .4rem; border: 1px solid rgb(255 255 255 / 14%); border-radius: 999px; background: rgb(8 8 12 / 48%); box-shadow: 0 10px 36px rgb(0 0 0 / 28%); opacity: 0; backdrop-filter: blur(10px); transform: translateX(-50%) translateY(8px) scale(.98); visibility: hidden; pointer-events: none; transition: opacity 180ms ease-in, transform 180ms ease-in, visibility 0s linear 180ms; }
+media-player[data-controls] .fullscreen-reactions { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); visibility: visible; pointer-events: auto; transition: opacity 240ms cubic-bezier(.2, 0, 0, 1), transform 240ms cubic-bezier(.2, 0, 0, 1), visibility 0s; }
 .fullscreen-reactions button { width: 2.2rem; height: 2.2rem; display: grid; place-items: center; border: 0; border-radius: 50%; background: transparent; cursor: pointer; font-size: 1.15rem; transition: background var(--duration-quick), transform var(--duration-quick); }
 .fullscreen-reactions button:hover, .fullscreen-reactions button:focus-visible { background: rgb(255 255 255 / 14%); transform: translateY(-3px) scale(1.08); }
 .fullscreen-chat-shell { position: absolute; z-index: 35; inset-block: .75rem 4.5rem; inset-inline-end: .75rem; width: min(25rem, 38vw); pointer-events: auto; }
