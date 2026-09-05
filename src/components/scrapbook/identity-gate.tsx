@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { login, type LoginState } from "@/app/actions/auth";
 import { Icon } from "@/components/ui/icons";
@@ -9,10 +9,16 @@ import { useApp } from "@/providers/app-provider";
 const initialState: LoginState = {};
 
 export function IdentityGate() {
-  const { locale, setLocale } = useApp();
+  const { locale, setLocale, selectIdentity } = useApp();
   const [state, action, pending] = useActionState(login, initialState);
   const isFa = locale === "fa";
   const reduced = useReducedMotion();
+
+  useEffect(() => {
+    if (!state.success || !state.identity) return;
+    selectIdentity(state.identity);
+    window.location.replace("/today");
+  }, [selectIdentity, state.identity, state.success]);
 
   return (
     <motion.section className="gate" aria-labelledby="gate-title" initial={reduced ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>

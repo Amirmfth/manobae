@@ -18,6 +18,7 @@ const navItems = [
   { key: "explore", href: "/explore", icon: "explore" },
   { key: "days", href: "/days", icon: "days" },
   { key: "dreams", href: "/dreams", icon: "dreams" },
+  { key: "watch", href: "/watch", icon: "watch" },
 ] as const;
 
 export function AppShell({ children }: { children: React.ReactNode }) {
@@ -77,5 +78,6 @@ function isActive(pathname: string, key: string) {
   if (key === "us") return pathname.startsWith("/us");
   if (key === "explore") return pathname.startsWith("/explore");
   if (key === "dreams") return pathname.startsWith("/dreams");
+  if (key === "watch") return pathname.startsWith("/watch");
   return false;
 }

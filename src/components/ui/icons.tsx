@@ -1,6 +1,6 @@
 import type { SVGProps } from "react";
 
-type IconName = "today" | "us" | "explore" | "days" | "dreams" | "globe" | "user" | "back" | "edit" | "close" | "place" | "lock" | "check";
+type IconName = "today" | "us" | "explore" | "days" | "dreams" | "watch" | "send" | "globe" | "user" | "back" | "edit" | "close" | "place" | "lock" | "check";
 
 export function Icon({ name, ...props }: { name: IconName } & SVGProps<SVGSVGElement>) {
   const paths: Record<IconName, React.ReactNode> = {
@@ -9,6 +9,8 @@ export function Icon({ name, ...props }: { name: IconName } & SVGProps<SVGSVGEle
     explore: <><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2.2 4.8-4.8 2.2 2.2-4.8 4.8-2.2Z"/></>,
     days: <><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18M7 14h.01M12 14h.01M17 14h.01M7 18h.01M12 18h.01"/></>,
     dreams: <><path d="M20.5 14.5A8.5 8.5 0 1 1 9.5 3.6 7 7 0 0 0 20.5 14.5Z"/><path d="m16 5 .4 1.3L18 7l-1.6.7L16 9l-.4-1.3L14 7l1.6-.7L16 5Z"/></>,
+    watch: <><rect x="3" y="6" width="18" height="13" rx="2"/><path d="m10 10 5 2.5-5 2.5v-5ZM8 3h8"/></>,
+    send: <><path d="m3 11 18-8-7 18-3-7-8-3Z"/><path d="m11 14 4-4"/></>,
     globe: <><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9S14.5 18.3 12 21c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3Z"/></>,
     user: <><circle cx="12" cy="8" r="4"/><path d="M4 21c.7-5 3.4-8 8-8s7.3 3 8 8"/></>,
     back: <path d="m15 18-6-6 6-6"/>,

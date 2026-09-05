@@ -29,9 +29,14 @@ The authenticated routes are protected twice: `src/proxy.ts` performs an optimis
 - Shared and author-specific event memories
 - Private multi-photo uploads to Supabase Storage
 - Initial deterministic insights for anniversaries, “on this day,” saved places, and resurfaced memories
+- Watch Together with Vidstack, persistent playback state/chat, and private Supabase Broadcast/Presence
 - Route foundations for Us, Explore, Dreams, Places, Decisions, Date Roulette, and Settings
 
 Questions, appreciations, decisions, dreams, and the Tehran map have database models and route boundaries, but their full interactions intentionally follow the completed calendar/event vertical slice.
+
+Watch Together additionally requires `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, and the server-only legacy `SUPABASE_JWT_SECRET`. The server mints short-lived identity JWTs for private Realtime channels; never expose the JWT secret to the browser.
+
+Hosted Supabase owns `realtime.messages` with a platform role that the migration connector cannot assume. Run `supabase/manual/realtime_watch_policies.sql` once from the project SQL Editor, then disable **Allow public access** in Realtime Settings. The policies only admit short-lived tokens for this couple's `watch:<coupleId>` topic.
 
 ## Verification
 

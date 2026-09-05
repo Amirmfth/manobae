@@ -52,29 +52,32 @@ model Couple {
   appreciations Appreciation[]
   dreams        Dream[]
   decisions     Decision[]
+  watchSession  WatchSession?
 }
 
 model User {
-  id             String             @id @default(cuid())
-  coupleId       String
-  identityKey    IdentityKey        @unique
-  nameFa         String
-  nameEn         String
-  passcodeHash   String
-  createdAt      DateTime           @default(now())
-  updatedAt      DateTime           @updatedAt
-  couple         Couple             @relation(fields: [coupleId], references: [id], onDelete: Cascade)
-  sessions       Session[]
-  createdEvents  Event[]            @relation("EventCreator")
-  eventMemories  EventMemory[]
-  participations EventParticipant[]
-  uploads        Media[]            @relation("MediaUploader")
-  answers        Answer[]
-  checkIns       DailyCheckIn[]
-  appreciations  Appreciation[]
-  createdDreams  Dream[]            @relation("DreamCreator")
-  createdDecisions Decision[]        @relation("DecisionCreator")
-  votes          Vote[]
+  id               String             @id @default(cuid())
+  coupleId         String
+  identityKey      IdentityKey        @unique
+  nameFa           String
+  nameEn           String
+  passcodeHash     String
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  couple           Couple             @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+  sessions         Session[]
+  createdEvents    Event[]            @relation("EventCreator")
+  eventMemories    EventMemory[]
+  participations   EventParticipant[]
+  uploads          Media[]            @relation("MediaUploader")
+  answers          Answer[]
+  checkIns         DailyCheckIn[]
+  appreciations    Appreciation[]
+  createdDreams    Dream[]            @relation("DreamCreator")
+  createdDecisions Decision[]         @relation("DecisionCreator")
+  votes            Vote[]
+  watchUpdates     WatchSession[]     @relation("WatchSessionUpdater")
+  watchMessages    WatchMessage[]
 
   @@index([coupleId])
 }
@@ -91,12 +94,12 @@ model Session {
 }
 
 model LoginAttempt {
-  id          String   @id @default(cuid())
-  fingerprint String   @unique
-  count       Int      @default(0)
-  windowStart DateTime @default(now())
+  id           String    @id @default(cuid())
+  fingerprint  String    @unique
+  count        Int       @default(0)
+  windowStart  DateTime  @default(now())
   blockedUntil DateTime?
-  updatedAt   DateTime @updatedAt
+  updatedAt    DateTime  @updatedAt
 }
 
 model Event {
@@ -165,18 +168,18 @@ model Media {
 }
 
 model Place {
-  id            String      @id @default(cuid())
-  coupleId      String
-  providerId    String?
-  name          String
-  address       String?
-  latitude      Decimal?    @db.Decimal(9, 6)
-  longitude     Decimal?    @db.Decimal(9, 6)
-  status        PlaceStatus @default(SAVED)
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
-  couple        Couple      @relation(fields: [coupleId], references: [id], onDelete: Cascade)
-  events        Event[]
+  id         String      @id @default(cuid())
+  coupleId   String
+  providerId String?
+  name       String
+  address    String?
+  latitude   Decimal?    @db.Decimal(9, 6)
+  longitude  Decimal?    @db.Decimal(9, 6)
+  status     PlaceStatus @default(SAVED)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  couple     Couple      @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+  events     Event[]
 
   @@unique([coupleId, providerId])
 }
@@ -221,14 +224,14 @@ model DailyCheckIn {
 }
 
 model Appreciation {
-  id        String     @id @default(cuid())
-  coupleId  String
-  authorId  String
-  body      String
+  id         String     @id @default(cuid())
+  coupleId   String
+  authorId   String
+  body       String
   visibility Visibility @default(SHARED)
-  createdAt DateTime   @default(now())
-  couple    Couple     @relation(fields: [coupleId], references: [id], onDelete: Cascade)
-  author    User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  createdAt  DateTime   @default(now())
+  couple     Couple     @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+  author     User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   @@index([coupleId, createdAt])
 }
@@ -278,4 +281,35 @@ model Vote {
   voter    User           @relation(fields: [voterId], references: [id], onDelete: Cascade)
 
   @@id([optionId, voterId])
+}
+
+model WatchSession {
+  id           String         @id @default("main")
+  coupleId     String         @unique
+  videoUrl     String?
+  title        String?
+  playing      Boolean        @default(false)
+  currentTime  Float          @default(0)
+  playbackRate Float          @default(1)
+  revision     Int            @default(0)
+  updatedById  String?
+  updatedAt    DateTime       @updatedAt
+  couple       Couple         @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+  updatedBy    User?          @relation("WatchSessionUpdater", fields: [updatedById], references: [id], onDelete: SetNull)
+  messages     WatchMessage[]
+
+  @@index([updatedById])
+}
+
+model WatchMessage {
+  id        String       @id @default(cuid())
+  sessionId String
+  userId    String
+  message   String       @db.VarChar(1000)
+  createdAt DateTime     @default(now())
+  session   WatchSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId, createdAt])
+  @@index([userId])
 }

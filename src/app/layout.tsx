@@ -3,6 +3,9 @@ import localFont from "next/font/local";
 import { AppShell } from "@/components/layout/app-shell";
 import { AppProvider } from "@/providers/app-provider";
 import { getSessionUser } from "@/lib/server/session";
+import "@vidstack/react/player/styles/base.css";
+import "@vidstack/react/player/styles/default/theme.css";
+import "@vidstack/react/player/styles/default/layouts/video.css";
 import "./globals.css";
 
 const manrope = localFont({

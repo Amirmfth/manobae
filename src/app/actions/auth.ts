@@ -7,7 +7,7 @@ import { db } from "@/lib/server/db";
 import { createSession, destroySession } from "@/lib/server/session";
 import { fingerprintRequest, verifyPasscode } from "@/lib/server/security";
 
-export type LoginState = { error?: string };
+export type LoginState = { error?: string; identity?: "amir" | "partner"; success?: boolean };
 
 const loginSchema = z.object({ passcode: z.string().regex(/^\d{6}$/) });
 
@@ -43,7 +43,10 @@ export async function login(_: LoginState, formData: FormData): Promise<LoginSta
 
   await db.loginAttempt.deleteMany({ where: { fingerprint } });
   await createSession(user.id);
-  redirect("/today");
+  return {
+    success: true,
+    identity: user.identityKey === "AMIR" ? "amir" : "partner",
+  };
 }
 
 export async function logout() {

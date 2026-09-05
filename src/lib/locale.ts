@@ -12,6 +12,7 @@ export const navLabels = {
     explore: "کشف کنیم",
     days: "روزهای ما",
     dreams: "رویاها",
+    watch: "تماشا",
   },
   en: {
     today: "Today",
@@ -19,6 +20,7 @@ export const navLabels = {
     explore: "Explore",
     days: "Our Days",
     dreams: "Dreams",
+    watch: "Watch",
   },
 } satisfies Record<Locale, Record<string, string>>;
 
