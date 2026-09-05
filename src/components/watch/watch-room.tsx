@@ -120,6 +120,7 @@ export function WatchRoom({
   const [mediaError, setMediaError] = useState<string | null>(null);
   const [subtitleOpen, setSubtitleOpen] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
+  const [controlsVisible, setControlsVisible] = useState(true);
   const [fullscreenChatOpen, setFullscreenChatOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const [messageNotice, setMessageNotice] = useState<WatchMessageView | null>(null);
@@ -462,12 +463,14 @@ export function WatchRoom({
                 onFullscreenChange={(isFullscreen) => {
                   fullscreenRef.current = isFullscreen;
                   setFullscreen(isFullscreen);
+                  setControlsVisible(true);
                   if (!isFullscreen) {
                     fullscreenChatOpenRef.current = false;
                     setFullscreenChatOpen(false);
                     setMessageNotice(null);
                   }
                 }}
+                onControlsChange={setControlsVisible}
                 onCanPlay={() => {
                   if (!playerRef.current || initializedSource.current === session.videoUrl) return;
                   playerRef.current.currentTime = session.currentTime;
@@ -514,12 +517,12 @@ export function WatchRoom({
                   }}
                 />
                 <AnimatePresence>
-                  {fullscreen && (
-                    <div className="fullscreen-reactions">
+                  {fullscreen && controlsVisible && (
+                    <motion.div className="fullscreen-reactions" initial={{ opacity: 0, y: 8, scale: .98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 6, scale: .98 }} transition={{ duration: reduced ? .05 : .2, ease: [0.2, 0, 0, 1] }}>
                       {(Object.keys(reactionGlyph) as WatchReaction[]).map((reaction) => (
                         <button key={reaction} type="button" onClick={() => sendReaction(reaction)} title={reactionLabels[reaction][isFa ? "fa" : "en"]} aria-label={reactionLabels[reaction][isFa ? "fa" : "en"]}>{reactionGlyph[reaction]}</button>
                       ))}
-                    </div>
+                    </motion.div>
                   )}
                   {fullscreen && fullscreenChatOpen && (
                     <motion.div className="fullscreen-chat-shell" initial={{ opacity: 0, x: isFa ? -24 : 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: isFa ? -24 : 24 }} transition={{ duration: reduced ? 0.05 : 0.24 }}>
