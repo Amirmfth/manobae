@@ -288,6 +288,11 @@ model WatchSession {
   coupleId     String         @unique
   videoUrl     String?
   title        String?
+  subtitleContent  String?         @db.Text
+  subtitleType     String?
+  subtitleLabel    String?
+  subtitleLanguage String?
+  subtitleFileName String?
   playing      Boolean        @default(false)
   currentTime  Float          @default(0)
   playbackRate Float          @default(1)

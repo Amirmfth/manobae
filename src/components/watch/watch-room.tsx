@@ -5,6 +5,7 @@ import { createClient, type RealtimeChannel } from "@supabase/supabase-js";
 import {
   MediaPlayer,
   MediaProvider,
+  Track,
   type MediaPlayerInstance,
 } from "@vidstack/react";
 import { DefaultVideoLayout, defaultLayoutIcons } from "@vidstack/react/player/layouts/default";
@@ -38,11 +39,25 @@ type PresenceMember = {
 type FloatingReaction = { id: string; reaction: WatchReaction; mine: boolean };
 
 const reactionGlyph: Record<WatchReaction, string> = {
-  heart: "♥",
+  love: "❤️",
   laugh: "😂",
-  surprise: "!",
-  cry: "☂",
-  eyes: "◉",
+  surprised: "😮",
+  sad: "😢",
+  scared: "😱",
+  angry: "😤",
+  awkward: "😬",
+  mindblown: "🤯",
+};
+
+const reactionLabels: Record<WatchReaction, { fa: string; en: string }> = {
+  love: { fa: "عاشقش شدم", en: "Love it" },
+  laugh: { fa: "خنده‌دار", en: "Funny" },
+  surprised: { fa: "غافلگیر شدم", en: "Surprised" },
+  sad: { fa: "غمگین", en: "Sad" },
+  scared: { fa: "ترسیدم", en: "Scared" },
+  angry: { fa: "عصبانی", en: "Angry" },
+  awkward: { fa: "وای نه", en: "Awkward" },
+  mindblown: { fa: "ترکوند", en: "Mind blown" },
 };
 
 const sourceType = (url: string) => url.split("?")[0]?.toLowerCase().endsWith(".m3u8")
@@ -89,6 +104,9 @@ export function WatchRoom({
   const correctionTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const initializedSource = useRef<string | null>(null);
   const messageEnd = useRef<HTMLDivElement>(null);
+  const audioContext = useRef<AudioContext | null>(null);
+  const fullscreenRef = useRef(false);
+  const fullscreenChatOpenRef = useRef(false);
 
   const [session, setSession] = useState(initialSession);
   const [messages, setMessages] = useState(initialMessages);
@@ -100,6 +118,12 @@ export function WatchRoom({
   const [sourceOpen, setSourceOpen] = useState(!initialSession.videoUrl);
   const [notice, setNotice] = useState<string | null>(null);
   const [mediaError, setMediaError] = useState<string | null>(null);
+  const [subtitleOpen, setSubtitleOpen] = useState(false);
+  const [fullscreen, setFullscreen] = useState(false);
+  const [fullscreenChatOpen, setFullscreenChatOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [messageNotice, setMessageNotice] = useState<WatchMessageView | null>(null);
+  const [soundEnabled, setSoundEnabled] = useState(true);
 
   const userName = isFa ? currentUser.nameFa : currentUser.nameEn;
   const partnerName = isFa
@@ -168,6 +192,29 @@ export function WatchRoom({
     window.setTimeout(() => setReactions((items) => items.filter((item) => item.id !== id)), 2200);
   }, []);
 
+  const playMessageSound = useCallback(() => {
+    if (!soundEnabled) return;
+    try {
+      const AudioContextClass = window.AudioContext;
+      const context = audioContext.current ?? new AudioContextClass();
+      audioContext.current = context;
+      if (context.state === "suspended") void context.resume();
+      const gain = context.createGain();
+      gain.gain.setValueAtTime(0.0001, context.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.055, context.currentTime + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + 0.32);
+      gain.connect(context.destination);
+      [660, 880].forEach((frequency, index) => {
+        const oscillator = context.createOscillator();
+        oscillator.type = "sine";
+        oscillator.frequency.value = frequency;
+        oscillator.connect(gain);
+        oscillator.start(context.currentTime + index * 0.09);
+        oscillator.stop(context.currentTime + 0.24 + index * 0.09);
+      });
+    } catch { /* Audio is an enhancement and may be blocked by the browser. */ }
+  }, [soundEnabled]);
+
   const handleRemoteEvent = useCallback((event: WatchEvent) => {
     if (!event || event.userId === currentUser.id) return;
     if (["PLAY", "PAUSE", "SEEK", "SYNC"].includes(event.type)) {
@@ -188,16 +235,27 @@ export function WatchRoom({
       applyingRemote.current = true;
       controller.current = false;
       initializedSource.current = null;
-      setSession((value) => ({ ...value, videoUrl: event.url, title: event.title, currentTime: 0, playing: false }));
+      setSession((value) => ({ ...value, videoUrl: event.url, title: event.title, currentTime: 0, playing: false, subtitleContent: null, subtitleType: null, subtitleLabel: null, subtitleLanguage: null, subtitleFileName: null }));
       setSourceOpen(false);
       setMediaError(null);
       releaseRemoteLock();
     }
+    if (event.type === "SUBTITLE_CHANGE") {
+      void fetch("/api/watch/subtitle", { cache: "no-store" })
+        .then((response) => response.ok ? response.json() : Promise.reject())
+        .then(({ subtitle }) => setSession((value) => ({ ...value, ...subtitle })))
+        .catch(() => undefined);
+    }
     if (event.type === "REACTION") addReaction(event.reaction, false);
     if (event.type === "MESSAGE") {
       setMessages((items) => items.some((item) => item.id === event.message.id) ? items : [...items, event.message].slice(-100));
+      playMessageSound();
+      if (fullscreenRef.current && !fullscreenChatOpenRef.current) {
+        setUnreadCount((count) => count + 1);
+        setMessageNotice(event.message);
+      }
     }
-  }, [addReaction, applyPlayback, broadcast, currentUser.id, releaseRemoteLock]);
+  }, [addReaction, applyPlayback, broadcast, currentUser.id, playMessageSound, releaseRemoteLock]);
 
   useEffect(() => {
     if (!realtimeConfigured) return;
@@ -279,6 +337,21 @@ export function WatchRoom({
   }, []);
 
   useEffect(() => {
+    if (!messageNotice) return;
+    const timer = window.setTimeout(() => setMessageNotice(null), 4200);
+    return () => window.clearTimeout(timer);
+  }, [messageNotice]);
+
+  useEffect(() => {
+    const unlock = () => {
+      if (!audioContext.current) audioContext.current = new AudioContext();
+      if (audioContext.current.state === "suspended") void audioContext.current.resume();
+    };
+    window.addEventListener("pointerdown", unlock, { once: true });
+    return () => window.removeEventListener("pointerdown", unlock);
+  }, []);
+
+  useEffect(() => {
     messageEnd.current?.scrollIntoView({ block: "nearest", behavior: reduced ? "auto" : "smooth" });
   }, [messages, reduced]);
 
@@ -317,6 +390,25 @@ export function WatchRoom({
     setMediaError(null);
     controller.current = true;
     await broadcast({ type: "SOURCE_CHANGE", url, title: title || null, sentAt: Date.now(), userId: currentUser.id });
+  }
+
+  async function changeSubtitle(form: FormData | null) {
+    const response = await fetch("/api/watch/subtitle", { method: form ? "POST" : "DELETE", body: form ?? undefined });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error ?? "subtitle");
+    setSession((value) => ({ ...value, ...result.subtitle }));
+    setSubtitleOpen(false);
+    await broadcast({ type: "SUBTITLE_CHANGE", sentAt: Date.now(), userId: currentUser.id });
+  }
+
+  function toggleFullscreenChat() {
+    const next = !fullscreenChatOpenRef.current;
+    fullscreenChatOpenRef.current = next;
+    setFullscreenChatOpen(next);
+    if (next) {
+      setUnreadCount(0);
+      setMessageNotice(null);
+    }
   }
 
   async function sendMessage(text: string) {
@@ -367,6 +459,15 @@ export function WatchRoom({
                 src={sourceType(session.videoUrl) ? { src: session.videoUrl, type: sourceType(session.videoUrl)! } : session.videoUrl}
                 playsInline
                 preload="metadata"
+                onFullscreenChange={(isFullscreen) => {
+                  fullscreenRef.current = isFullscreen;
+                  setFullscreen(isFullscreen);
+                  if (!isFullscreen) {
+                    fullscreenChatOpenRef.current = false;
+                    setFullscreenChatOpen(false);
+                    setMessageNotice(null);
+                  }
+                }}
                 onCanPlay={() => {
                   if (!playerRef.current || initializedSource.current === session.videoUrl) return;
                   playerRef.current.currentTime = session.currentTime;
@@ -382,8 +483,49 @@ export function WatchRoom({
                 }}
                 onError={() => setMediaError(isFa ? "این لینک در مرورگر پخش نشد. احتمالاً فرمت، CORS یا زمان انقضای لینک مشکل دارد." : "This link could not play in the browser. Check its format, CORS policy, or expiry time.")}
               >
-                <MediaProvider />
-                <DefaultVideoLayout icons={defaultLayoutIcons} />
+                <MediaProvider>
+                  {session.subtitleContent && session.subtitleType && (
+                    <Track
+                      key={`${session.subtitleFileName}-${session.revision}`}
+                      content={session.subtitleContent}
+                      type={session.subtitleType === "srt" ? "srt" : "vtt"}
+                      kind="subtitles"
+                      label={session.subtitleLabel ?? "Subtitles"}
+                      lang={session.subtitleLanguage ?? "fa"}
+                      default
+                    />
+                  )}
+                </MediaProvider>
+                <DefaultVideoLayout
+                  icons={defaultLayoutIcons}
+                  slots={{
+                    beforeFullscreenButton: (
+                      <button className="vds-button watch-control-button" type="button" onClick={toggleFullscreenChat} aria-label={isFa ? "باز کردن گفت‌وگو" : "Open chat"} aria-pressed={fullscreenChatOpen}>
+                        <Icon name="chat" />
+                        {unreadCount > 0 && <span className="watch-control-badge">{Math.min(unreadCount, 9)}</span>}
+                      </button>
+                    ),
+                  }}
+                />
+                <AnimatePresence>
+                  {fullscreen && (
+                    <motion.div className="fullscreen-reactions" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+                      {(Object.keys(reactionGlyph) as WatchReaction[]).map((reaction) => (
+                        <button key={reaction} type="button" onClick={() => sendReaction(reaction)} title={reactionLabels[reaction][isFa ? "fa" : "en"]} aria-label={reactionLabels[reaction][isFa ? "fa" : "en"]}>{reactionGlyph[reaction]}</button>
+                      ))}
+                    </motion.div>
+                  )}
+                  {fullscreen && fullscreenChatOpen && (
+                    <motion.div className="fullscreen-chat-shell" initial={{ opacity: 0, x: isFa ? -24 : 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: isFa ? -24 : 24 }} transition={{ duration: reduced ? 0.05 : 0.24 }}>
+                      <WatchChat isFa={isFa} theme={theme} messages={messages} currentUser={currentUser} userName={userName} partnerName={partnerName} messageEnd={messageEnd} onSend={sendMessage} onError={(message) => toast(message)} mode="overlay" soundEnabled={soundEnabled} onToggleSound={() => setSoundEnabled((value) => !value)} onClose={toggleFullscreenChat} />
+                    </motion.div>
+                  )}
+                  {fullscreen && messageNotice && !fullscreenChatOpen && (
+                    <motion.button className="fullscreen-message-toast" type="button" onClick={toggleFullscreenChat} initial={{ opacity: 0, y: 16, scale: .96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 8 }} aria-live="polite">
+                      <Icon name="chat" /><span><strong>{isFa ? messageNotice.user.nameFa : messageNotice.user.nameEn}</strong><small>{messageNotice.message}</small></span>
+                    </motion.button>
+                  )}
+                </AnimatePresence>
               </MediaPlayer>
               <AnimatePresence>
                 {reactions.map((item, index) => (
@@ -412,13 +554,17 @@ export function WatchRoom({
               <small>{isFa ? "الان روی پرده" : "Now showing"}</small>
               <strong>{session.title || (isFa ? "هنوز چیزی انتخاب نشده" : "Nothing selected yet")}</strong>
             </div>
-            <button className="button button--secondary" type="button" onClick={() => setSourceOpen((value) => !value)}>
-              <Icon name="edit" />{isFa ? "عوض کردن فیلم" : "Change film"}
-            </button>
+            <div className="watch-title-actions">
+              <button className="button button--secondary" type="button" onClick={() => setSubtitleOpen((value) => !value)}><Icon name="subtitles" />{session.subtitleFileName ? (isFa ? "عوض کردن زیرنویس" : "Change subtitles") : (isFa ? "افزودن زیرنویس" : "Add subtitles")}</button>
+              <button className="button button--secondary" type="button" onClick={() => setSourceOpen((value) => !value)}><Icon name="edit" />{isFa ? "عوض کردن فیلم" : "Change film"}</button>
+            </div>
           </div>
 
           <AnimatePresence initial={false}>
             {sourceOpen && <SourceForm isFa={isFa} initialTitle={session.title ?? ""} onSubmit={changeSource} onClose={session.videoUrl ? () => setSourceOpen(false) : undefined} />}
+          </AnimatePresence>
+          <AnimatePresence initial={false}>
+            {subtitleOpen && <SubtitleForm isFa={isFa} currentFile={session.subtitleFileName} onSubmit={changeSubtitle} onClose={() => setSubtitleOpen(false)} />}
           </AnimatePresence>
 
           {(notice || mediaError) && <div className="watch-notice" role="alert"><span aria-hidden="true">!</span><p>{mediaError ?? notice}</p></div>}
@@ -442,6 +588,9 @@ export function WatchRoom({
           messageEnd={messageEnd}
           onSend={sendMessage}
           onError={(message) => toast(message)}
+          mode="page"
+          soundEnabled={soundEnabled}
+          onToggleSound={() => setSoundEnabled((value) => !value)}
         />
       </div>
     </motion.div>
@@ -487,7 +636,53 @@ function SourceForm({ isFa, initialTitle, onSubmit, onClose }: { isFa: boolean; 
   );
 }
 
-function WatchChat({ isFa, theme, messages, currentUser, userName, partnerName, messageEnd, onSend, onError }: {
+function SubtitleForm({ isFa, currentFile, onSubmit, onClose }: { isFa: boolean; currentFile: string | null; onSubmit: (form: FormData | null) => Promise<void>; onClose: () => void }) {
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState("");
+
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setPending(true);
+    setError("");
+    try { await onSubmit(new FormData(event.currentTarget)); }
+    catch (cause) { setError(cause instanceof Error ? cause.message : "Could not save subtitles."); }
+    finally { setPending(false); }
+  }
+
+  async function remove() {
+    setPending(true);
+    setError("");
+    try { await onSubmit(null); }
+    catch (cause) { setError(cause instanceof Error ? cause.message : "Could not remove subtitles."); }
+    finally { setPending(false); }
+  }
+
+  return (
+    <motion.form className="watch-source-form watch-subtitle-form stack-md" onSubmit={submit} initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }}>
+      <div className="watch-source-form__heading">
+        <div><p className="eyebrow">{isFa ? "زیرنویس مشترک" : "Shared subtitles"}</p><h2>{isFa ? "زیرنویس فیلم" : "Movie subtitles"}</h2></div>
+        <button className="button button--icon button--quiet" type="button" onClick={onClose} aria-label={isFa ? "بستن" : "Close"}><Icon name="close" /></button>
+      </div>
+      <p className="watch-source-help">{isFa ? "فایل SRT یا VTT را بفرست؛ برای هر دوی شما روی همین فیلم فعال می‌شود." : "Upload an SRT or VTT file; it will appear for both of you on this movie."}</p>
+      {currentFile && <div className="subtitle-current"><Icon name="subtitles" /><span><small>{isFa ? "فایل فعلی" : "Current file"}</small><strong dir="auto">{currentFile}</strong></span></div>}
+      <div>
+        <label className="field-label" htmlFor="watch-subtitle-file">{isFa ? "فایل زیرنویس" : "Subtitle file"}</label>
+        <input className="text-field" id="watch-subtitle-file" name="file" type="file" accept=".srt,.vtt,text/vtt,application/x-subrip" required />
+      </div>
+      <div className="watch-subtitle-fields">
+        <div><label className="field-label" htmlFor="watch-subtitle-label">{isFa ? "نام" : "Label"}</label><input className="text-field" id="watch-subtitle-label" name="label" defaultValue={isFa ? "فارسی" : "English"} maxLength={80} /></div>
+        <div><label className="field-label" htmlFor="watch-subtitle-language">{isFa ? "زبان" : "Language"}</label><select className="text-field" id="watch-subtitle-language" name="language" defaultValue={isFa ? "fa" : "en"}><option value="fa">فارسی</option><option value="en">English</option></select></div>
+      </div>
+      {error && <p className="form-error" role="alert">{error}</p>}
+      <div className="subtitle-actions">
+        <button className="button button--primary" type="submit" disabled={pending}>{pending ? (isFa ? "در حال ذخیره…" : "Saving…") : (isFa ? "فعال کردن زیرنویس" : "Use subtitles")}</button>
+        {currentFile && <button className="button button--quiet" type="button" disabled={pending} onClick={remove}>{isFa ? "حذف زیرنویس" : "Remove subtitles"}</button>}
+      </div>
+    </motion.form>
+  );
+}
+
+function WatchChat({ isFa, theme, messages, currentUser, userName, partnerName, messageEnd, onSend, onError, mode, soundEnabled, onToggleSound, onClose }: {
   isFa: boolean;
   theme: string;
   messages: WatchMessageView[];
@@ -497,6 +692,10 @@ function WatchChat({ isFa, theme, messages, currentUser, userName, partnerName, 
   messageEnd: React.RefObject<HTMLDivElement | null>;
   onSend: (text: string) => Promise<void>;
   onError: (message: string) => void;
+  mode: "page" | "overlay";
+  soundEnabled: boolean;
+  onToggleSound: () => void;
+  onClose?: () => void;
 }) {
   const [text, setText] = useState("");
   const [pending, setPending] = useState(false);
@@ -517,8 +716,8 @@ function WatchChat({ isFa, theme, messages, currentUser, userName, partnerName, 
   }
 
   return (
-    <aside className={`watch-chat watch-chat--${theme}`} aria-label={isFa ? "حرف‌های وسط فیلم" : "Movie chat"}>
-      <header><div><p className="eyebrow">{isFa ? "حرف‌های وسط فیلم" : "Between the scenes"}</p><h2>{isFa ? `${userName} و ${partnerName}` : `${userName} & ${partnerName}`}</h2></div><span className="motif motif--thread" aria-hidden="true" /></header>
+    <aside className={`watch-chat watch-chat--${theme} watch-chat--${mode}`} aria-label={isFa ? "حرف‌های وسط فیلم" : "Movie chat"}>
+      <header><div><p className="eyebrow">{isFa ? "حرف‌های وسط فیلم" : "Between the scenes"}</p><h2>{isFa ? `${userName} و ${partnerName}` : `${userName} & ${partnerName}`}</h2></div><div className="watch-chat-tools"><button type="button" onClick={onToggleSound} aria-label={soundEnabled ? (isFa ? "بی‌صدا کردن پیام‌ها" : "Mute message sounds") : (isFa ? "روشن کردن صدای پیام‌ها" : "Enable message sounds")} aria-pressed={soundEnabled}><Icon name={soundEnabled ? "sound" : "muted"} /></button>{onClose && <button type="button" onClick={onClose} aria-label={isFa ? "بستن گفت‌وگو" : "Close chat"}><Icon name="close" /></button>}</div></header>
       <div className="watch-messages" aria-live="polite">
         {!messages.length && <div className="watch-chat-empty"><span aria-hidden="true">“</span><p>{isFa ? "اولین چیزی که وسط فیلم می‌گویی اینجا می‌ماند." : "The first thing you whisper during the movie will stay here."}</p></div>}
         {messages.map((message) => {
@@ -529,8 +728,8 @@ function WatchChat({ isFa, theme, messages, currentUser, userName, partnerName, 
         <div ref={messageEnd} />
       </div>
       <form className="watch-chat-form" onSubmit={submit}>
-        <label className="sr-only" htmlFor="watch-message">{isFa ? "پیام" : "Message"}</label>
-        <textarea id="watch-message" value={text} onChange={(event) => setText(event.target.value)} maxLength={1000} rows={2} placeholder={isFa ? "یه چیزی بگو…" : "Say something…"} />
+        <label className="sr-only" htmlFor={`watch-message-${mode}`}>{isFa ? "پیام" : "Message"}</label>
+        <textarea id={`watch-message-${mode}`} value={text} onChange={(event) => setText(event.target.value)} maxLength={1000} rows={2} placeholder={isFa ? "یه چیزی بگو…" : "Say something…"} />
         <button type="submit" disabled={pending || !text.trim()} aria-label={isFa ? "فرستادن پیام" : "Send message"}><Icon name="send" /></button>
       </form>
     </aside>

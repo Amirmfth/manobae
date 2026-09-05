@@ -148,11 +148,19 @@
 .watch-title-strip small, .watch-title-strip strong { display: block; }
 .watch-title-strip small { margin-block-end: .2rem; color: rgb(255 255 255 / 56%); font-size: .7rem; text-transform: uppercase; }
 .watch-title-strip strong { overflow: hidden; font-size: 1.05rem; text-overflow: ellipsis; white-space: nowrap; }
+.watch-title-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .watch-cinema .button--secondary { border-color: rgb(255 255 255 / 22%); background: rgb(255 255 255 / 8%); color: var(--paper-0); }
 .watch-source-form { position: relative; margin: var(--space-3) 0 0; padding: var(--space-5); border: 1px solid color-mix(in srgb, var(--text) 16%, transparent); color: var(--text); background: var(--surface); }
 .watch-source-form::before { position: absolute; inset-block-start: -.65rem; inset-inline-start: 38%; width: 4.8rem; height: 1.2rem; background: color-mix(in srgb, var(--secondary) 32%, var(--surface)); content: ""; transform: rotate(-1deg); }
 .watch-source-form__heading { display: flex; justify-content: space-between; gap: var(--space-3); align-items: flex-start; }
 .watch-source-help { display: block; margin-block-start: var(--space-2); color: var(--text-secondary); line-height: 1.7; }
+.watch-subtitle-fields { display: grid; grid-template-columns: minmax(0, 1fr) minmax(7rem, .45fr); gap: var(--space-3); }
+.subtitle-current { display: flex; gap: var(--space-3); align-items: center; padding: var(--space-3); border: 1px dashed color-mix(in srgb, var(--text) 20%, transparent); background: var(--surface-subtle); }
+.subtitle-current svg { width: 1.5rem; flex: 0 0 auto; color: var(--accent-strong); }
+.subtitle-current small, .subtitle-current strong { display: block; }
+.subtitle-current small { color: var(--text-secondary); }
+.subtitle-current strong { max-width: min(30rem, 65vw); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.subtitle-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 .watch-notice { display: flex; gap: var(--space-3); align-items: flex-start; margin: var(--space-3) 0 0; padding: var(--space-3); border: 1px solid color-mix(in srgb, var(--secondary) 44%, transparent); background: color-mix(in srgb, var(--secondary) 15%, transparent); }
 .watch-notice > span { width: 1.4rem; height: 1.4rem; flex: 0 0 auto; display: grid; place-items: center; border: 1px solid currentColor; border-radius: 50%; font-weight: 800; }
 .watch-notice p { font-size: .85rem; line-height: 1.65; }
@@ -160,6 +168,29 @@
 .reaction-tray button { width: 2.75rem; height: 2.75rem; display: grid; place-items: center; border: 1px solid rgb(255 255 255 / 18%); border-radius: 50%; background: rgb(255 255 255 / 7%); color: var(--paper-0); cursor: pointer; font-size: 1.1rem; transition: transform var(--duration-quick) var(--ease-enter), background var(--duration-quick) var(--ease-enter); }
 .reaction-tray button:hover { background: rgb(255 255 255 / 14%); transform: translateY(-2px); }
 .reaction-tray button:active { transform: scale(.96); }
+.watch-control-button { position: relative; display: none !important; }
+media-player[data-fullscreen] .watch-control-button { display: inline-flex !important; }
+.watch-control-button svg { width: 1.25rem; height: 1.25rem; }
+.watch-control-badge { position: absolute; inset-block-start: .1rem; inset-inline-end: .05rem; min-width: 1rem; height: 1rem; display: grid; place-items: center; padding-inline: .2rem; border-radius: 999px; background: #e65b70; color: white; font: 700 .62rem/1 system-ui; box-shadow: 0 2px 8px rgb(0 0 0 / 35%); }
+.fullscreen-reactions { position: absolute; z-index: 31; inset-inline-start: 50%; inset-block-end: 4.7rem; display: flex; gap: .3rem; padding: .4rem; border: 1px solid rgb(255 255 255 / 14%); border-radius: 999px; background: rgb(8 8 12 / 48%); box-shadow: 0 10px 36px rgb(0 0 0 / 28%); backdrop-filter: blur(10px); transform: translateX(-50%); pointer-events: auto; }
+.fullscreen-reactions button { width: 2.2rem; height: 2.2rem; display: grid; place-items: center; border: 0; border-radius: 50%; background: transparent; cursor: pointer; font-size: 1.15rem; transition: background var(--duration-quick), transform var(--duration-quick); }
+.fullscreen-reactions button:hover, .fullscreen-reactions button:focus-visible { background: rgb(255 255 255 / 14%); transform: translateY(-3px) scale(1.08); }
+.fullscreen-chat-shell { position: absolute; z-index: 35; inset-block: .75rem 4.5rem; inset-inline-end: .75rem; width: min(25rem, 38vw); pointer-events: auto; }
+.watch-chat--overlay { width: 100%; height: 100%; min-height: 0; border-color: rgb(255 255 255 / 18%); border-radius: 18px !important; background: rgb(12 12 17 / 62%); color: white; box-shadow: 0 20px 70px rgb(0 0 0 / 38%); backdrop-filter: blur(12px) saturate(.8); }
+.watch-chat--overlay > header { padding: .85rem 1rem; border-color: rgb(255 255 255 / 12%); }
+.watch-chat--overlay .eyebrow, .watch-chat--overlay .watch-message small, .watch-chat--overlay .watch-message time { color: rgb(255 255 255 / 60%); }
+.watch-chat--overlay .watch-message { border-color: rgb(255 255 255 / 11%); background: rgb(255 255 255 / 9%); }
+.watch-chat--overlay .watch-message.is-mine { background: color-mix(in srgb, var(--accent-strong) 45%, transparent); }
+.watch-chat--overlay .watch-chat-form { border-color: rgb(255 255 255 / 12%); background: rgb(0 0 0 / 12%); }
+.watch-chat--overlay .watch-chat-form textarea { border-color: rgb(255 255 255 / 16%); background: rgb(255 255 255 / 9%); color: white; }
+.watch-chat--overlay .watch-chat-form textarea::placeholder { color: rgb(255 255 255 / 52%); }
+.watch-chat-tools { display: flex; gap: .3rem; }
+.watch-chat-tools button { width: 2.25rem; height: 2.25rem; display: grid; place-items: center; border: 1px solid color-mix(in srgb, currentColor 16%, transparent); border-radius: 50%; background: transparent; color: inherit; cursor: pointer; }
+.watch-chat-tools svg { width: 1.1rem; }
+.fullscreen-message-toast { position: absolute; z-index: 36; inset-inline-end: 1rem; inset-block-end: 5rem; width: min(22rem, calc(100% - 2rem)); display: grid; grid-template-columns: 2.5rem minmax(0, 1fr); gap: .75rem; align-items: center; padding: .75rem; border: 1px solid rgb(255 255 255 / 17%); border-radius: 15px; background: rgb(10 10 14 / 58%); color: white; text-align: start; box-shadow: 0 12px 38px rgb(0 0 0 / 30%); backdrop-filter: blur(12px); cursor: pointer; }
+.fullscreen-message-toast > svg { width: 1.3rem; justify-self: center; }
+.fullscreen-message-toast strong, .fullscreen-message-toast small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fullscreen-message-toast small { margin-block-start: .15rem; color: rgb(255 255 255 / 68%); }
 .floating-reaction { position: absolute; z-index: 8; inset-block-end: 1rem; display: grid; width: 3.25rem; height: 3.25rem; place-items: center; border: 1px solid rgb(255 255 255 / 28%); border-radius: 50%; background: color-mix(in srgb, var(--deep) 78%, transparent); box-shadow: 0 8px 24px rgb(0 0 0 / 24%); font-size: 1.5rem; pointer-events: none; }
 .floating-reaction.is-mine { background: color-mix(in srgb, var(--accent-strong) 82%, transparent); }
 .watch-chat { min-height: 28rem; display: grid; grid-template-rows: auto minmax(16rem, 1fr) auto; overflow: hidden; border: 1px solid color-mix(in srgb, var(--text) 16%, transparent); background: var(--surface); box-shadow: var(--shadow-lift-1); }
@@ -196,6 +227,19 @@
   .mobile-nav a { font-size: .58rem; }
   .mobile-nav a svg { width: 1.15rem; height: 1.15rem; }
   .reaction-tray { gap: var(--space-1); }
+}
+
+@media (max-width: 47.99rem) {
+  .watch-subtitle-fields { grid-template-columns: 1fr; }
+  .fullscreen-chat-shell { inset: auto .35rem 4.4rem; width: auto; height: min(58vh, 30rem); }
+  .watch-chat--overlay { border-radius: 20px 20px 8px 8px !important; background: rgb(10 10 15 / 68%); }
+  .watch-chat--overlay > header { padding: .7rem .85rem; }
+  .watch-chat--overlay > header h2 { font-size: .95rem; }
+  .watch-chat--overlay .watch-messages { padding: .75rem; }
+  .watch-chat--overlay .watch-chat-form { padding: .55rem; }
+  .fullscreen-reactions { max-width: calc(100% - 1rem); inset-block-end: 4.2rem; gap: .05rem; padding: .25rem; }
+  .fullscreen-reactions button { width: 2rem; height: 2rem; font-size: 1rem; }
+  media-player[data-fullscreen] .vds-controls { padding-bottom: env(safe-area-inset-bottom); }
 }
 
 @media (min-width: 48rem) {

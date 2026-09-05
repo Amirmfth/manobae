@@ -23,6 +23,11 @@ export async function POST(request: Request) {
     data: {
       videoUrl: parsed.data.url,
       title: parsed.data.title || null,
+      subtitleContent: null,
+      subtitleType: null,
+      subtitleLabel: null,
+      subtitleLanguage: null,
+      subtitleFileName: null,
       currentTime: 0,
       playing: false,
       playbackRate: 1,
