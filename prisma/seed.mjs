@@ -1,6 +1,8 @@
 import { PrismaClient, IdentityKey } from "@prisma/client";
 import { randomBytes, scryptSync } from "node:crypto";
+import { loadEnvConfig } from "@next/env";
 
+loadEnvConfig(process.cwd());
 const prisma = new PrismaClient();
 
 function hashPasscode(passcode) {
