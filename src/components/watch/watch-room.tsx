@@ -49,6 +49,21 @@ const sourceType = (url: string) => url.split("?")[0]?.toLowerCase().endsWith(".
   ? "application/x-mpegurl"
   : undefined;
 
+const watchTimeFormatters = {
+  fa: new Intl.DateTimeFormat("fa-IR", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+    timeZone: "Asia/Tehran",
+  }),
+  en: new Intl.DateTimeFormat("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+    timeZone: "Asia/Tehran",
+  }),
+};
+
 export function WatchRoom({
   initialSession,
   initialMessages,
@@ -351,7 +366,6 @@ export function WatchRoom({
                 title={session.title ?? (isFa ? "فیلم ما" : "Our movie")}
                 src={sourceType(session.videoUrl) ? { src: session.videoUrl, type: sourceType(session.videoUrl)! } : session.videoUrl}
                 playsInline
-                crossOrigin
                 preload="metadata"
                 onCanPlay={() => {
                   if (!playerRef.current || initializedSource.current === session.videoUrl) return;
@@ -510,7 +524,7 @@ function WatchChat({ isFa, theme, messages, currentUser, userName, partnerName, 
         {messages.map((message) => {
           const mine = message.user.id === currentUser.id;
           const name = isFa ? message.user.nameFa : message.user.nameEn;
-          return <article key={message.id} className={`watch-message ${mine ? "is-mine" : ""}`}><small>{name}</small><p>{message.message}</p><time dateTime={message.createdAt}>{new Intl.DateTimeFormat(isFa ? "fa-IR" : "en", { hour: "2-digit", minute: "2-digit" }).format(new Date(message.createdAt))}</time></article>;
+          return <article key={message.id} className={`watch-message ${mine ? "is-mine" : ""}`}><small>{name}</small><p>{message.message}</p><time dateTime={message.createdAt}>{watchTimeFormatters[isFa ? "fa" : "en"].format(new Date(message.createdAt))}</time></article>;
         })}
         <div ref={messageEnd} />
       </div>
